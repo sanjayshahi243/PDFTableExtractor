@@ -1,0 +1,41 @@
+version: '3'
+
+services:
+  flask:
+    &flask
+    build:
+      context: .
+      dockerfile: ./compose/production/flask/Dockerfile
+    container_name: flask
+    ports:
+      - 5000:5000
+    env_file:
+      - ./.envs/.production/.redis.env
+      - ./.envs/.production/.celery
+    command: /start
+    restart: always
+    volumes:
+      - /home/sanjay/projects/PDFExtractor/media:/app/media
+      
+  redis:
+    image: redis:5.0
+
+  celeryworker:
+    <<: *flask
+    ports:
+      - "49483:49483"
+    container_name: celery
+    command: /start-celeryworker
+    depends_on:
+      - flask
+      - redis
+
+  flower:
+    <<: *flask
+    ports:
+      - "5555:5555"
+    container_name: flower
+    command: /start-flower
+    depends_on:
+      - flask
+      - redis

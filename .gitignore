@@ -120,6 +120,7 @@ dmypy.json
 myenv
 .vscode
 venv/
+virtualenv/
 # End of https://www.gitignore.io/api/flask
 
 media/
