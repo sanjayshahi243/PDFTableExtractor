@@ -1,8 +1,8 @@
-"""Initial migration.
+"""Initial Migrations
 
-Revision ID: e2b062ea7bba
+Revision ID: 3a04df6a6110
 Revises: 
-Create Date: 2024-02-11 18:29:05.153693
+Create Date: 2024-02-11 21:10:59.578389
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = 'e2b062ea7bba'
+revision = '3a04df6a6110'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -21,9 +21,11 @@ def upgrade():
     op.create_table('tasks',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('task_id', sa.String(length=60), nullable=False),
-    sa.Column('file_name', sa.String(length=255), nullable=False),
-    sa.Column('upload_directory', sa.String(length=255), nullable=False),
+    sa.Column('file_name', sa.Text(), nullable=False),
+    sa.Column('upload_directory', sa.Text(), nullable=False),
+    sa.Column('number_of_files_generated', sa.Integer(), nullable=True),
     sa.Column('status', sa.String(length=25), nullable=False),
+    sa.Column('info', sa.Text(), nullable=True),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('task_id')
     )
