@@ -39,6 +39,7 @@ class Result(Resource):
                     "message": "No tables to extract",
                     "input_file": str(os.path.join(task_instance.upload_directory, task_instance.file_name))
                 }
+            buffer = create_zip(task_instance.upload_directory)
             return send_file(buffer, download_name='{}.zip'.format(task_instance.upload_directory), as_attachment=True)
         elif task_instance.status == "FAILED": 
             buffer = write_failure_report(str(task_instance.info)) 
