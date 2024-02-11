@@ -1,12 +1,14 @@
 import os
 import time
-from flask import Blueprint
+from flask import Blueprint, send_file
 from flask_restx import Api, Resource
 from werkzeug.datastructures import FileStorage
 from pdfExtractor.core.tasks import process_pdf
 
 # from pdfExtractor.utils.pdfExtractor import convert_df_to_csv, extract_tables_from_pdf
 from celery.result import AsyncResult
+
+from pdfExtractor.utils.pdfExtractor import create_zip, write_failure_report
 
 # from pdfExtractor.utils.base_renderer import CustomRenderer
 
@@ -24,6 +26,13 @@ upload_parser.add_argument('file', location='files',
 class Result(Resource):
     def get(self, id: str) -> dict[str, object]:
         result = AsyncResult(id)
+        if result.ready():
+            if result.successful():
+                buffer = create_zip(result.result)
+                return send_file(buffer, download_name='{}.zip'.format(result.result), as_attachment=True)
+            else: 
+                buffer = write_failure_report(str(result.info)) 
+                return send_file(buffer, download_name='{}.txt'.format(result.id), as_attachment=True)
         return {
             "ready": result.ready(),
             "successful": result.successful(),
@@ -44,11 +53,9 @@ class PDFUpload(Resource):
 
         file_path = os.path.join(upload_folder, uploaded_file.filename)
         uploaded_file.save(file_path)
-        # tables_df = extract_tables_from_pdf(file_path)
-        # for idx, table in enumerate(tables_df):
-        #     convert_df_to_csv(df=table, output_file=f'{file_path}_table_{idx}.csv'.format(file_path, idx))
+        
         # Pass the file path to the Celery task for processing
-        result = process_pdf.delay(file_path)
+        result = process_pdf.delay({"upload_folder": upload_folder, "file_path": file_path})
 
         return {
             'message': 'File uploaded successfully',

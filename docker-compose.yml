@@ -1,5 +1,8 @@
 version: '3'
 
+volumes:
+  media: {}
+
 services:
   flask:
     &flask
@@ -15,7 +18,7 @@ services:
     command: /start
     restart: always
     volumes:
-      - /home/sanjay/projects/PDFExtractor/media:/app/media
+      - media:/app/media
       
   redis:
     image: redis:5.0
