@@ -1,4 +1,15 @@
+"""
+PDFExtractor Application Initialization Module.
+
+This module initializes the PDFExtractor Flask application and sets up necessary components.
+
+Functions:
+- celery_init_app(app: Flask) -> Celery: Initialize Celery for the Flask app.
+- create_app(test_config=None) -> Flask: Create and configure the Flask app.
+"""
+
 import os
+from typing import Optional
 from dotenv import load_dotenv
 
 # Flask Imports
@@ -14,6 +25,17 @@ db = SQLAlchemy()
 migrate = Migrate()
 
 def celery_init_app(app: Flask) -> Celery:
+
+    """
+    Initialize Celery for the Flask app.
+
+    Parameters:
+    - app (Flask): The Flask app instance.
+
+    Returns:
+    - Celery: The initialized Celery app.
+    """
+
     class FlaskTask(Task):
         def __call__(self, *args: object, **kwargs: object) -> object:
             with app.app_context():
@@ -25,7 +47,18 @@ def celery_init_app(app: Flask) -> Celery:
     app.extensions["celery"] = celery_app
     return celery_app
 
-def create_app(test_config=None):
+def create_app(test_config: Optional[dict] = None) -> Flask:
+
+    """
+    Create and configure the Flask app.
+
+    Parameters:
+    - test_config (dict, optional): Configuration for testing purposes.
+
+    Returns:
+    - Flask: The configured Flask app.
+    """
+     
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(

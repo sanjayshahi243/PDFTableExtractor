@@ -1,4 +1,11 @@
-from celery import shared_task 
+"""
+PDFExtractor Celery Configuration Module.
+
+This module configures and initializes Celery for the PDFExtractor Flask application.
+
+Functions:
+- make_celery(app) -> Celery: Create and configure Celery for the Flask app.
+"""
 
 from pdfExtractor import create_app
 
