@@ -21,4 +21,3 @@ celery -A pdfExtractor.make_celery -b "${BROKER_URL}" flower &
 
 # Run Flask in the background
 flask run --no-reload --no-debug &
-

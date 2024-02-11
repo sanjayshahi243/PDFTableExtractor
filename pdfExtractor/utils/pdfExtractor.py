@@ -1,10 +1,14 @@
 import io
 import os
 import zipfile
+
 import camelot
 from pandas import DataFrame
 
-def extract_tables_from_pdf(pdf_path: str, pages: str = "all") -> camelot.core.TableList:
+
+def extract_tables_from_pdf(
+    pdf_path: str, pages: str = "all"
+) -> camelot.core.TableList:
     """
     Extract tables from a PDF file.
 
@@ -18,6 +22,7 @@ def extract_tables_from_pdf(pdf_path: str, pages: str = "all") -> camelot.core.T
     # Read the PDF file and extract tables
     tables = camelot.read_pdf(pdf_path, pages=pages)
     return tables
+
 
 def convert_df_to_csv(df: DataFrame, output_file: str) -> str:
     """
@@ -34,6 +39,7 @@ def convert_df_to_csv(df: DataFrame, output_file: str) -> str:
     print(f"DataFrame successfully converted to CSV: {output_file}")
     return output_file
 
+
 def create_zip(directory_path: str) -> io.BytesIO:
     """
     Create a zip file from the contents of a directory.
@@ -49,7 +55,7 @@ def create_zip(directory_path: str) -> io.BytesIO:
     list_of_files = os.listdir(directory_path)
 
     # Create a ZipFile object
-    with zipfile.ZipFile(buffer, 'a', zipfile.ZIP_DEFLATED) as zipf:
+    with zipfile.ZipFile(buffer, "a", zipfile.ZIP_DEFLATED) as zipf:
         for file_path in list_of_files:
             zipf.write(os.path.join(directory_path, file_path), arcname=file_path)
 
@@ -58,6 +64,7 @@ def create_zip(directory_path: str) -> io.BytesIO:
 
     # Return the in-memory buffer
     return buffer
+
 
 def write_failure_report(output_string: str) -> io.BytesIO:
     """
@@ -73,7 +80,7 @@ def write_failure_report(output_string: str) -> io.BytesIO:
     buffer = io.BytesIO()
 
     # Write content to the buffer
-    buffer.write(output_string.encode('utf-8'))
+    buffer.write(output_string.encode("utf-8"))
 
     # Set the BytesIO buffer's position to the beginning
     buffer.seek(0)

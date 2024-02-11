@@ -34,7 +34,7 @@ services:
     restart: always
     volumes:
       - postgres_data:/var/lib/postgresql/data
-      
+
   redis:
     image: redis:5.0
 

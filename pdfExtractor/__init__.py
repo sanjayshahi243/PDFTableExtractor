@@ -1,7 +1,8 @@
 """
 PDFExtractor Application Initialization Module.
 
-This module initializes the PDFExtractor Flask application and sets up necessary components.
+This module initializes the PDFExtractor Flask application and
+sets up necessary components.
 
 Functions:
 - celery_init_app(app: Flask) -> Celery: Initialize Celery for the Flask app.
@@ -9,23 +10,22 @@ Functions:
 """
 
 import os
-from typing import Optional
+
+from celery import Celery, Task
 from dotenv import load_dotenv
 
 # Flask Imports
 from flask import Flask
-
-load_dotenv()
-
-from celery import Celery, Task
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+
+load_dotenv()
 
 db = SQLAlchemy()
 migrate = Migrate()
 
-def celery_init_app(app: Flask) -> Celery:
 
+def celery_init_app(app: Flask) -> Celery:
     """
     Initialize Celery for the Flask app.
 
@@ -47,8 +47,8 @@ def celery_init_app(app: Flask) -> Celery:
     app.extensions["celery"] = celery_app
     return celery_app
 
-def create_app(test_config: Optional[dict] = None) -> Flask:
 
+def create_app(test_config: dict | None = None) -> Flask:
     """
     Create and configure the Flask app.
 
@@ -58,13 +58,15 @@ def create_app(test_config: Optional[dict] = None) -> Flask:
     Returns:
     - Flask: The configured Flask app.
     """
-     
+
     # create and configure the app
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
-        SECRET_KEY=os.environ.get('SECRET_KEY'),
+        SECRET_KEY=os.environ.get("SECRET_KEY"),
     )
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL", 'sqlite:///app.db')
+    app.config["SQLALCHEMY_DATABASE_URI"] = os.environ.get(
+        "DATABASE_URL", "sqlite:///app.db"
+    )
 
     # Initialize SQLAlchemy
     db.init_app(app)
@@ -72,7 +74,7 @@ def create_app(test_config: Optional[dict] = None) -> Flask:
 
     if test_config is None:
         # load the instance config, if it exists, when not testing
-        app.config.from_pyfile('config.py', silent=True)
+        app.config.from_pyfile("config.py", silent=True)
     else:
         # load the test config if passed in
         app.config.from_mapping(test_config)
@@ -85,10 +87,10 @@ def create_app(test_config: Optional[dict] = None) -> Flask:
 
     # Route imports
     from pdfExtractor.core.routes import core_bp
-    
+
     app.register_blueprint(core_bp)
 
-    from flask import request
+    # from flask import request
 
     # @app.after_request
     # def after_request(response):
@@ -97,13 +99,16 @@ def create_app(test_config: Optional[dict] = None) -> Flask:
 
     app.config.from_mapping(
         CELERY=dict(
-            broker_url=os.environ.get("BROKER_URL", "redis://localhost:6379/0"),
-            result_backend=os.environ.get("RESULT_BACKEND", "redis://localhost:6379/0"),
+            broker_url=os.environ.get("BROKER_URL", "redis://localhost:6379/0"),  # noqa
+            result_backend=os.environ.get(
+                "RESULT_BACKEND", "redis://localhost:6379/0"
+            ),  # noqa
             task_ignore_result=True,
         ),
     )
     app.config.from_prefixed_env()
     celery_init_app(app)
 
-    from pdfExtractor import models
+    from pdfExtractor import models  # noqa
+
     return app

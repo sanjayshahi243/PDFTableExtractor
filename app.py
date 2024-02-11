@@ -1,4 +1,4 @@
-""" 
+"""
 PDFExtractor Application Entry Point.
 
 This module serves as the entry point for the PDFExtractor Flask application.

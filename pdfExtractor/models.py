@@ -1,5 +1,6 @@
 from pdfExtractor import db
 
+
 class TaskModel(db.Model):
 
     """
@@ -17,9 +18,9 @@ class TaskModel(db.Model):
     - info (str, optional): Additional information about the task.
     """
 
-    #TODO: status to be set as Enum
-    
-    __tablename__ = 'tasks'
+    # TODO: status to be set as Enum
+
+    __tablename__ = "tasks"
 
     id = db.Column(db.Integer, primary_key=True)
     task_id = db.Column(db.String(60), nullable=False, unique=True)

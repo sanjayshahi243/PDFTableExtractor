@@ -43,17 +43,17 @@ Environment variables can be configured in the .env file. A sample of environmen
 
    1. Using virtual-env
        #### Install Prerequisites
-       ```bash 
+       ```bash
        apt install ghostscript redis-server
        ```
-       
+
        #### All necessary commands are available in run.sh script file.
        ```bash
        sh run.sh
-       ```    
+       ```
 
        #### Terminate the process
-       ```bash 
+       ```bash
        sh terminate.sh
        ```
        #### Note: This will kill the process running in port 5000 and 5555 i.e. Flask Application and flower
@@ -81,4 +81,3 @@ Environment variables can be configured in the .env file. A sample of environmen
 ### Access
    - Flask application at http://localhost:5000
    - Flower (Celery monitoring tool) at http://localhost:5555
-
