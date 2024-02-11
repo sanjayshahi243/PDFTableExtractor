@@ -2,7 +2,6 @@ Flask==3.0.2
 python-dotenv==1.0.1
 pre-commit==3.3.3
 Flask-Cors==3.0.10
-psycopg2-binary==2.9.6
 camelot-py==0.9.0
 numpy==1.26.4
 opencv-python==4.9.0.80

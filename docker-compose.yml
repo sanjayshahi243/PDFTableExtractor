@@ -2,8 +2,10 @@ version: '3'
 
 volumes:
   media: {}
+  postgres_data: {}
 
 services:
+
   flask:
     &flask
     build:
@@ -15,10 +17,23 @@ services:
     env_file:
       - ./.envs/.production/.redis.env
       - ./.envs/.production/.celery
+      - ./.envs/.production/.postgres
     command: /start
     restart: always
     volumes:
       - media:/app/media
+    depends_on:
+      - db
+
+  db:
+    container_name: dbservice
+    image: postgres:latest
+    command: postgres -c 'max_connections=200'
+    env_file:
+      - ./.envs/.production/.postgres
+    restart: always
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
       
   redis:
     image: redis:5.0

@@ -4,4 +4,7 @@ set -o errexit
 set -o pipefail
 set -o nounset
 
+# Apply database migrations
+flask db upgrade
+
 exec /usr/local/bin/gunicorn app:app --bind 0.0.0.0:5000 -w 4

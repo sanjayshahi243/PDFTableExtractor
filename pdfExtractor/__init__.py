@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 # Flask Imports
 from flask import Flask
 
-# load_dotenv()
+load_dotenv()
 
 from celery import Celery, Task
 from flask_migrate import Migrate
@@ -31,7 +31,7 @@ def create_app(test_config=None):
     app.config.from_mapping(
         SECRET_KEY=os.environ.get('SECRET_KEY'),
     )
-    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
+    app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get("DATABASE_URL", 'sqlite:///app.db')
 
     # Initialize SQLAlchemy
     db.init_app(app)
