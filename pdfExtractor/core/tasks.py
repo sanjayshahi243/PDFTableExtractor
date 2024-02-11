@@ -23,7 +23,6 @@ def process_pdf(file_details: dict) -> str:
 def update_task_model(task_id, **kwargs):
     # Assuming file_path is unique and can be used to identify the corresponding TaskModel row
     task_instance = TaskModel.query.filter_by(task_id=task_id).first()
-    print(task_instance)
     if task_instance:
         for key, value in kwargs.items():
             setattr(task_instance, key, value)

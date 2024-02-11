@@ -7,6 +7,7 @@ from pdfExtractor.core.tasks import process_pdf, update_task_model
 
 # from pdfExtractor.utils.pdfExtractor import convert_df_to_csv, extract_tables_from_pdf
 from celery.result import AsyncResult
+from pdfExtractor.models import TaskModel
 
 from pdfExtractor.utils.pdfExtractor import create_zip, write_failure_report
 
@@ -25,19 +26,28 @@ upload_parser.add_argument('file', location='files',
 @api.route("/result/<id>")
 class Result(Resource):
     def get(self, id: str) -> dict[str, object]:
-        result = AsyncResult(id)
-        if result.ready():
-            if result.successful():
-                buffer = create_zip(result.result)
-                return send_file(buffer, download_name='{}.zip'.format(result.result), as_attachment=True)
-            else: 
-                buffer = write_failure_report(str(result.info)) 
-                return send_file(buffer, download_name='{}.txt'.format(result.id), as_attachment=True)
-        return {
-            "ready": result.ready(),
-            "successful": result.successful(),
-            "value": result.result if result.ready() else None,
-        }
+        task_instance = TaskModel.query.filter_by(task_id=id).first()
+        if not task_instance:
+            return {
+                "message": "Invalid task id",
+            }
+        if task_instance.status == "COMPLETE":
+            if not task_instance.number_of_files_generated:
+                return {
+                    "task_id": task_instance.task_id,
+                    "status": task_instance.status,
+                    "message": "No tables to extract",
+                    "input_file": str(os.path.join(task_instance.upload_directory, task_instance.file_name))
+                }
+            return send_file(buffer, download_name='{}.zip'.format(task_instance.upload_directory), as_attachment=True)
+        elif task_instance.status == "FAILED": 
+            buffer = write_failure_report(str(task_instance.info)) 
+            return send_file(buffer, download_name='{}.txt'.format(task_instance.task_id), as_attachment=True)
+        else:
+            return {
+                "task_id": task_instance.task_id,
+                "status": task_instance.status,
+            }
 
 @api.route('/upload/pdf/')
 @api.expect(upload_parser)
