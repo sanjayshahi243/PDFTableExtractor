@@ -5,6 +5,7 @@ import camelot
 
 def extract_tables_from_pdf(pdf_path, pages="all"):
     # Read the PDF file and extract tables
+    print("PDF Path", pdf_path)
     tables = camelot.read_pdf(pdf_path, pages=pages)
     print(tables)
     # Display or process extracted tables

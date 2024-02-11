@@ -7,6 +7,11 @@ from flask import Flask
 # load_dotenv()
 
 from celery import Celery, Task
+from flask_migrate import Migrate
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
+migrate = Migrate()
 
 def celery_init_app(app: Flask) -> Celery:
     class FlaskTask(Task):
@@ -25,9 +30,13 @@ def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=True)
     app.config.from_mapping(
         SECRET_KEY=os.environ.get('SECRET_KEY'),
-        DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
     )
-    
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
+
+    # Initialize SQLAlchemy
+    db.init_app(app)
+    migrate.init_app(app, db)
+
     if test_config is None:
         # load the instance config, if it exists, when not testing
         app.config.from_pyfile('config.py', silent=True)
@@ -63,4 +72,5 @@ def create_app(test_config=None):
     app.config.from_prefixed_env()
     celery_init_app(app)
 
+    from pdfExtractor import models
     return app
